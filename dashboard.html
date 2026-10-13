@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>জরিপ ড্যাশবোর্ড</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#10201c;--sub:#566a65;--bg:#eef5f2;--card:#fff;--soft:#f4f9f7;--line:#cfdfd9;--brand:#0b6b57;--brand-d:#08503f;--on:#fff;--tint:#dcf1ea;--hi:#f5b800;--err:#b3261e;--bar:#0b6b57}
+@media (prefers-color-scheme:dark){:root{--ink:#e7f2ee;--sub:#9db4ad;--bg:#0b1513;--card:#122320;--soft:#0e1c19;--line:#25423b;--brand:#3fc9a6;--brand-d:#2fae8d;--on:#06201a;--tint:#14352d;--err:#ff8a80;--bar:#3fc9a6}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Hind Siliguri',system-ui,sans-serif;font-size:16px;line-height:1.5}
+[hidden]{display:none!important}
+button,input,select{font:inherit;color:inherit}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 16px;border-radius:11px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:600;white-space:nowrap}
+.btn:hover{border-color:var(--brand)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:var(--on)}
+.btn.pri:hover{background:var(--brand-d)}
+.btn.danger{color:var(--err)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--hi);outline-offset:1px}
+input[type=text],input[type=email],input[type=password],input[type=search],select{width:100%;min-height:46px;padding:0 14px;background:var(--soft);border:1.5px solid var(--line);border-radius:11px}
+input:focus,select:focus{outline:none;border-color:var(--brand)}
+
+/* login */
+.center{min-height:100vh;display:grid;place-items:center;padding:20px}
+.lcard{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px 24px}
+.lcard h1{margin:0 0 4px;font-size:24px;color:var(--brand)}
+.lcard p{margin:0 0 20px;color:var(--sub)}
+.lcard .btn{width:100%;justify-content:center;min-height:48px}
+.lcard label{display:block;font-weight:600;margin:14px 0 6px}
+.or{display:flex;align-items:center;gap:10px;color:var(--sub);margin:18px 0;font-size:14px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.err{color:var(--err);font-weight:500;margin-top:12px;min-height:22px}
+
+/* app */
+.top{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;padding:12px 18px;padding-top:calc(12px + env(safe-area-inset-top));background:var(--card);border-bottom:1px solid var(--line)}
+.top h1{margin:0;font-size:19px;color:var(--brand);flex:1}
+.top .who{color:var(--sub);font-size:14px}
+@media (max-width:640px){.top .who{display:none}}
+main{max-width:1180px;margin:0 auto;padding:18px 14px 60px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.kpi b{display:block;font-size:30px;line-height:1.1;color:var(--brand)}
+.kpi span{color:var(--sub);font-size:14px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.dd{position:relative}
+.dd summary{list-style:none}
+.dd summary::-webkit-details-marker{display:none}
+.dd .menu{position:absolute;z-index:25;top:calc(100% + 6px);left:0;min-width:210px;background:var(--card);border:1.5px solid var(--brand);border-radius:13px;padding:6px;box-shadow:0 14px 34px rgba(0,0,0,.2)}
+.dd .menu button{display:block;width:100%;text-align:left;padding:10px 12px;background:none;border:0;border-radius:8px;cursor:pointer}
+.dd .menu button:hover{background:var(--tint)}
+.dd.dis summary{opacity:.45;pointer-events:none}
+h2{font-size:18px;margin:26px 0 10px;color:var(--brand)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.panel h3{margin:0 0 12px;font-size:16px}
+.brow{display:grid;grid-template-columns:minmax(90px,38%) 1fr auto;gap:10px;align-items:center;margin:7px 0;font-size:14.5px}
+.brow .tr{height:12px;background:var(--soft);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.brow .fi{height:100%;background:var(--bar);border-radius:99px}
+.brow em{font-style:normal;color:var(--sub);font-size:13px}
+.empty{color:var(--sub);padding:8px 0}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:16px}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--soft);font-weight:600;white-space:nowrap;position:sticky;top:0}
+tbody tr.rw{cursor:pointer}
+tbody tr.rw:hover{background:var(--tint)}
+td.n{white-space:nowrap}
+.fl{display:inline-block;width:22px;height:16px;object-fit:cover;border-radius:3px;vertical-align:-3px;margin-right:6px;box-shadow:0 0 0 1px var(--line)}
+.chip{display:inline-block;padding:2px 9px;margin:1px 3px 1px 0;background:var(--tint);border-radius:99px;font-size:13px}
+.filters{display:grid;grid-template-columns:1fr 220px;gap:10px;margin-bottom:10px}
+@media (max-width:560px){.filters{grid-template-columns:1fr}}
+input[type=checkbox].ck{width:20px;height:20px;accent-color:var(--brand);cursor:pointer}
+
+/* modal */
+.ov{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:flex;justify-content:center;align-items:flex-end;padding:0}
+@media (min-width:700px){.ov{align-items:center;padding:20px}}
+.md{background:var(--card);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;border:1px solid var(--line)}
+@media (min-width:700px){.md{border-radius:20px}}
+.mh{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--card)}
+.mh h3{margin:0;flex:1;font-size:18px}
+.mb{padding:6px 18px 10px}
+.dl{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;padding:9px 0;border-bottom:1px dashed var(--line)}
+@media (max-width:520px){.dl{grid-template-columns:1fr;gap:0}}
+.dl dt{color:var(--sub);font-size:14px}
+.dl dd{margin:0;word-break:break-word}
+.mf{display:flex;flex-wrap:wrap;gap:8px;padding:14px 18px 18px;border-top:1px solid var(--line)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--brand);color:var(--on);padding:10px 18px;border-radius:99px;z-index:80;font-weight:600}
+
+/* print */
+#printArea{display:none}
+@media print{
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block!important;color:#111;background:#fff;font-size:12px}
+  #printArea h1{font-size:20px;margin:0 0 4px;color:#08503f}
+  #printArea h2{font-size:15px;margin:16px 0 6px;color:#08503f;break-after:avoid}
+  #printArea table{width:100%;border-collapse:collapse;margin-bottom:8px}
+  #printArea th,#printArea td{border:1px solid #bbb;padding:4px 6px;font-size:11.5px;position:static;background:#fff;color:#111}
+  #printArea th{background:#e8f3ef}
+  #printArea tr{break-inside:avoid}
+  @page{margin:14mm}
+}
+</style>
+</head>
+<body>
+
+<div id="login" class="center">
+  <div class="lcard">
+    <h1>জরিপ ড্যাশবোর্ড</h1>
+    <p>শুধু অ্যাডমিন দেখতে পারবেন। লগইন করুন।</p>
+    <button class="btn" id="gBtn" type="button">Google দিয়ে লগইন</button>
+    <div class="or">অথবা ইমেইল দিয়ে</div>
+    <label for="em">ইমেইল</label>
+    <input type="email" id="em" autocomplete="username" inputmode="email">
+    <label for="pw">পাসওয়ার্ড</label>
+    <input type="password" id="pw" autocomplete="current-password">
+    <div style="height:14px"></div>
+    <button class="btn pri" id="eBtn" type="button">লগইন করুন</button>
+    <div class="err" id="lerr" role="alert"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <div class="top">
+    <h1>প্রবাসী জরিপ ড্যাশবোর্ড</h1>
+    <span class="who" id="who"></span>
+    <button class="btn" id="out" type="button">লগআউট</button>
+  </div>
+  <main>
+    <div class="kpis" id="kpis"></div>
+
+    <div class="tools">
+      <details class="dd" id="ddAll"><summary class="btn pri">সব ডেটা ডাউনলোড ▾</summary>
+        <div class="menu">
+          <button data-sc="all" data-f="xlsx">Excel (.xlsx)</button>
+          <button data-sc="all" data-f="csv">CSV</button>
+          <button data-sc="all" data-f="json">JSON</button>
+          <button data-sc="all" data-f="pdf">PDF রিপোর্ট</button>
+        </div>
+      </details>
+      <details class="dd dis" id="ddSel"><summary class="btn" id="selLbl">নির্বাচিত ডাউনলোড (0) ▾</summary>
+        <div class="menu">
+          <button data-sc="sel" data-f="xlsx">Excel (.xlsx)</button>
+          <button data-sc="sel" data-f="csv">CSV</button>
+          <button data-sc="sel" data-f="json">JSON</button>
+          <button data-sc="sel" data-f="pdf">PDF রিপোর্ট</button>
+        </div>
+      </details>
+    </div>
+
+    <h2>সারসংক্ষেপ</h2>
+    <div class="grid" id="charts"></div>
+
+    <h2>দেশ অনুযায়ী তুলনা</h2>
+    <div class="tw"><table id="ctable"></table></div>
+
+    <h2>সব উত্তর</h2>
+    <div class="filters">
+      <input type="search" id="q" placeholder="নাম, নম্বর, ইমেইল বা সার্ভিস খুঁজুন">
+      <select id="cf"><option value="">সব দেশ</option></select>
+    </div>
+    <div class="tw"><table id="rtable"></table></div>
+    <div style="text-align:center;margin-top:12px"><button class="btn" id="more" hidden>আরও দেখান</button></div>
+  </main>
+</div>
+
+<div class="ov" id="modal" hidden><div class="md" role="dialog" aria-modal="true">
+  <div class="mh"><h3 id="mt"></h3><button class="btn" id="mx" type="button">বন্ধ করুন</button></div>
+  <div class="mb" id="mbody"></div>
+  <div class="mf" id="mfoot"></div>
+</div></div>
+
+<div id="printArea"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCceQ7umBKnXiMyurnrsQfOB1HZy6nNeNk",
+  authDomain: "probashi-data-collect.firebaseapp.com",
+  projectId: "probashi-data-collect",
+  storageBucket: "probashi-data-collect.firebasestorage.app",
+  messagingSenderId: "498662093722",
+  appId: "1:498662093722:web:60974fb4ff0c862c38c023"
+};
+const OWNER_EMAIL = 'contact.sitamim@gmail.com';
+const COLLECTION = 'survey_responses';
+
+const $ = id => document.getElementById(id);
+const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const flag = c => c ? `<img class="fl" src="https://flagcdn.com/w40/${c}.png" alt="" loading="lazy" onerror="this.style.display='none'">` : '';
+const toast = t => { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 2200); };
+
+const LBL = {
+  methods:{bank:'ব্যাংক',exchange:'এক্সচেঞ্জ হাউস / কাউন্টার',app:'মোবাইল অ্যাপ',wallet:'বিকাশ / নগদ / রকেট',friend:'পরিচিত কারও হাতে',agent:'এজেন্ট / দালাল',other:'অন্য উপায়'},
+  problems:{high_fee:'ফি বেশি',bad_rate:'দর কম',slow:'দেরিতে পৌঁছায়',far:'কাউন্টার দূরে',language:'অ্যাপ বুঝতে কষ্ট',trust:'ঠকার ভয়',docs:'কাগজপত্র ঝামেলা',none:'তেমন সমস্যা নেই'},
+  wants:{low_fee:'কম ফি / ফি ছাড়া',rate:'ভালো রেট',fast:'সঙ্গে সঙ্গে পৌঁছানো',wallet:'বিকাশ / নগদে সহজে',bangla:'বাংলা অ্যাপ',home:'ঘরে বসে পাঠানো',safe:'নিরাপত্তা ও বিশ্বাস',support:'বাংলায় সাহায্য'},
+  transferTime:{minutes:'কয়েক মিনিট',hours:'কয়েক ঘণ্টা','1day':'১ দিন','2-3days':'২–৩ দিন বা বেশি'},
+  rateFeeling:{good:'ভালো রেট পাই',ok:'মোটামুটি',bad:'কম রেট পাই',dk:'বুঝি না'},
+  incentiveAware:{get:'জানি, পাই',no_get:'জানি, পাই না',unaware:'জানি না'},
+  interest:{yes:'হ্যাঁ, চাইব',maybe:'আগে জানব',no:'না, ঠিক আছে'},
+  timesPerMonth:{'1':'১ বার','2':'২ বার','3':'৩ বার','4+':'৪ বা বেশি'}
+};
+const ARR = Object.keys(LBL);
+const lab = (f, v) => (LBL[f] || {})[v] || v;
+const DETAIL = [['name','নাম'],['whatsapp','হোয়াটসঅ্যাপ'],['email','ইমেইল'],['countryBn','দেশ'],['yearsAbroad','প্রবাসে কত বছর'],['job','কাজ'],['methods','টাকা পাঠানোর পদ্ধতি'],['service','সার্ভিস / অ্যাপ'],['timesPerMonth','মাসে কতবার'],['currencyName','মুদ্রা'],['avgAmount','একবারে গড়ে'],['feePerTransfer','ফি (একবারে)'],['feePercent','ফি শতাংশ (%)'],['monthlyVolume','মাসে মোট'],['transferTime','পৌঁছাতে সময়'],['rateFeeling','রেট নিয়ে মত'],['problems','সমস্যা'],['incentiveAware','প্রণোদনা'],['wants','যা চান'],['interest','নতুন সার্ভিস'],['note','মন্তব্য'],['createdAt','জমার সময়']];
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth(), db = firebase.firestore();
+let ALL = [], SEL = new Set(), unsub = null, LIMIT = 100;
+
+/* ---------- auth ---------- */
+const lerr = t => { $('lerr').textContent = t || ''; };
+$('gBtn').onclick = async () => { lerr(); try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); } catch (e) { lerr(authMsg(e)); } };
+$('eBtn').onclick = async () => { lerr(); try { await auth.signInWithEmailAndPassword($('em').value.trim(), $('pw').value); } catch (e) { lerr(authMsg(e)); } };
+$('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('eBtn').click(); });
+$('out').onclick = () => auth.signOut();
+function authMsg(e){
+  const c = e.code || '';
+  if (c.includes('popup-closed')) return 'লগইন উইন্ডো বন্ধ হয়ে গেছে।';
+  if (c.includes('unauthorized-domain')) return 'এই ডোমেইন Firebase-এ অনুমোদিত নয়। Authentication > Settings > Authorized domains-এ যোগ করুন।';
+  if (c.includes('operation-not-supported') || c.includes('web-storage')) return 'ফাইল সরাসরি খুলে Google লগইন হয় না। ইমেইল দিয়ে লগইন করুন, বা সাইট অনলাইনে দিন।';
+  if (c.includes('invalid-credential') || c.includes('wrong-password') || c.includes('user-not-found') || c.includes('invalid-email')) return 'ইমেইল বা পাসওয়ার্ড ঠিক নয়।';
+  if (c.includes('operation-not-allowed')) return 'Firebase-এ এই লগইন পদ্ধতি চালু করা হয়নি।';
+  return 'লগইন হয়নি: ' + (e.message || c);
+}
+auth.onAuthStateChanged(u => {
+  if (unsub){ unsub(); unsub = null; }
+  if (!u){ $('app').hidden = true; $('login').hidden = false; return; }
+  if ((u.email || '').toLowerCase() !== OWNER_EMAIL){ lerr('এই অ্যাকাউন্টের অনুমতি নেই।'); auth.signOut(); return; }
+  $('login').hidden = true; $('app').hidden = false; $('who').textContent = u.email;
+  unsub = db.collection(COLLECTION).orderBy('createdAt', 'desc').onSnapshot(snap => {
+    ALL = snap.docs.map(norm);
+    SEL = new Set([...SEL].filter(id => ALL.some(r => r.id === id)));
+    renderAll();
+  }, err => { console.error(err); $('kpis').innerHTML = `<div class="panel" style="grid-column:1/-1;color:var(--err)">ডেটা আনা যায়নি (${esc(err.code || err.message)}). Firestore Rules-এ আপনার ইমেইলের read অনুমতি দিয়েছেন কি না দেখুন।</div>`; });
+});
+
+/* ---------- data ---------- */
+function norm(d){
+  const r = d.data(); r.id = d.id;
+  ARR.forEach(f => { r[f] = [].concat(r[f] == null || r[f] === '' ? [] : r[f]); });
+  r.createdAt = r.createdAt && r.createdAt.toDate ? r.createdAt.toDate() : null;
+  const tp = r.timesPerMonth.map(v => v === '4+' ? 4 : Number(v)).filter(Boolean);
+  r.freqMax = tp.length ? Math.max(...tp) : null;
+  r.monthlyVolume = r.freqMax && r.avgAmount ? r.freqMax * r.avgAmount : null;
+  r.feePercent = r.avgAmount && r.feePerTransfer != null && r.feePerTransfer !== '' ? +(r.feePerTransfer / r.avgAmount * 100).toFixed(2) : null;
+  return r;
+}
+const count = (list, f) => { const m = {}; list.forEach(r => r[f].forEach(v => { m[v] = (m[v] || 0) + 1; })); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+const avg = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : null;
+const pct = (n, t) => t ? Math.round(n / t * 100) : 0;
+const fmtDate = d => d ? d.toLocaleString('bn-BD', {dateStyle:'medium', timeStyle:'short'}) : '';
+const valStr = (r, f) => {
+  if (f === 'createdAt') return fmtDate(r.createdAt);
+  const v = r[f]; if (Array.isArray(v)) return v.map(x => lab(f, x)).join('، ');
+  return v == null ? '' : v;
+};
+
+/* ---------- render ---------- */
+function renderAll(){ renderKpis(); renderCharts(); renderCountries(); renderFilters(); renderTable(); updateSel(); }
+
+function renderKpis(){
+  const n = ALL.length, fees = ALL.map(r => r.feePercent).filter(x => x != null);
+  const countries = new Set(ALL.map(r => r.countryEn).filter(Boolean)).size;
+  const interestAns = ALL.filter(r => r.interest.length), yes = interestAns.filter(r => r.interest.includes('yes')).length;
+  const prob = count(ALL, 'problems').filter(x => x[0] !== 'none')[0];
+  const f = avg(fees);
+  $('kpis').innerHTML = [
+    [n, 'মোট উত্তর'], [countries, 'কয়টি দেশ থেকে'],
+    [f == null ? '—' : f.toFixed(1) + '%', 'গড় ফি (পাঠানো টাকার %)'],
+    [interestAns.length ? pct(yes, interestAns.length) + '%' : '—', 'নতুন সার্ভিস চান (হ্যাঁ)'],
+    [prob ? lab('problems', prob[0]) : '—', 'সবচেয়ে বেশি সমস্যা']
+  ].map(k => `<div class="kpi"><b style="${String(k[0]).length > 8 ? 'font-size:20px;padding:6px 0' : ''}">${esc(k[0])}</b><span>${k[1]}</span></div>`).join('');
+}
+function barBlock(title, f, list){
+  const total = list.length, items = count(list, f).slice(0, 8);
+  const max = items.length ? items[0][1] : 1;
+  return `<div class="panel"><h3>${title}</h3>${items.length ? items.map(([k, v]) => `<div class="brow"><span>${esc(lab(f, k))}</span><div class="tr"><div class="fi" style="width:${Math.max(4, v / max * 100)}%"></div></div><em>${v} (${pct(v, total)}%)</em></div>`).join('') : '<div class="empty">এখনো উত্তর নেই</div>'}</div>`;
+}
+function renderCharts(){
+  const byC = {}; ALL.forEach(r => { const k = r.countryBn || '—'; byC[k] = (byC[k] || 0) + 1; });
+  const ce = Object.entries(byC).sort((a, b) => b[1] - a[1]).slice(0, 8), cm = ce.length ? ce[0][1] : 1;
+  const byCur = {}; ALL.forEach(r => { if (r.currency) byCur[r.currency] = (byCur[r.currency] || 0) + 1; });
+  const cu = Object.entries(byCur).sort((a, b) => b[1] - a[1]).slice(0, 8), um = cu.length ? cu[0][1] : 1;
+  const simple = (t, e, m) => `<div class="panel"><h3>${t}</h3>${e.length ? e.map(([k, v]) => `<div class="brow"><span>${esc(k)}</span><div class="tr"><div class="fi" style="width:${Math.max(4, v / m * 100)}%"></div></div><em>${v} (${pct(v, ALL.length)}%)</em></div>`).join('') : '<div class="empty">এখনো উত্তর নেই</div>'}</div>`;
+  $('charts').innerHTML = simple('কোন দেশ থেকে', ce, cm) + simple('কোন মুদ্রায় পাঠান', cu, um)
+    + barBlock('টাকা পাঠানোর পদ্ধতি', 'methods', ALL) + barBlock('সমস্যা', 'problems', ALL)
+    + barBlock('যা চান', 'wants', ALL) + barBlock('রেট নিয়ে মত', 'rateFeeling', ALL)
+    + barBlock('পৌঁছাতে সময়', 'transferTime', ALL) + barBlock('মাসে কতবার', 'timesPerMonth', ALL)
+    + barBlock('প্রণোদনা জানেন কি না', 'incentiveAware', ALL) + barBlock('নতুন সার্ভিস দেখতে চান', 'interest', ALL);
+}
+function countryStats(list){
+  const g = {};
+  list.forEach(r => { const k = r.countryEn || '—'; (g[k] = g[k] || {bn: r.countryBn || '—', code: r.countryCode, rows: []}).rows.push(r); });
+  return Object.entries(g).map(([en, o]) => {
+    const fees = o.rows.map(r => r.feePercent).filter(x => x != null);
+    const top = count(o.rows, 'methods')[0];
+    const yes = o.rows.filter(r => r.interest.includes('yes')).length;
+    return {en, bn: o.bn, code: o.code, n: o.rows.length, fee: avg(fees), top: top ? lab('methods', top[0]) : '', yes};
+  }).sort((a, b) => b.n - a.n);
+}
+function renderCountries(){
+  const rows = countryStats(ALL);
+  $('ctable').innerHTML = `<thead><tr><th>দেশ</th><th>উত্তর</th><th>গড় ফি %</th><th>বেশি ব্যবহৃত পদ্ধতি</th><th>নতুন সার্ভিস চান</th></tr></thead><tbody>${rows.length ? rows.map(c => `<tr><td class="n">${flag(c.code)}${esc(c.bn)}</td><td>${c.n}</td><td>${c.fee == null ? '—' : c.fee.toFixed(1) + '%'}</td><td>${esc(c.top)}</td><td>${c.yes} জন</td></tr>`).join('') : '<tr><td colspan="5" class="empty">এখনো কোনো উত্তর নেই</td></tr>'}</tbody>`;
+}
+function renderFilters(){
+  const cur = $('cf').value, set = new Map();
+  ALL.forEach(r => { if (r.countryEn) set.set(r.countryEn, r.countryBn); });
+  $('cf').innerHTML = '<option value="">সব দেশ</option>' + [...set].sort((a, b) => a[1].localeCompare(b[1], 'bn')).map(([en, bn]) => `<option value="${esc(en)}">${esc(bn)}</option>`).join('');
+  $('cf').value = set.has(cur) ? cur : '';
+}
+function view(){
+  const q = $('q').value.trim().toLowerCase(), c = $('cf').value;
+  return ALL.filter(r => (!c || r.countryEn === c) && (!q || [r.name, r.whatsapp, r.email, r.service, r.countryBn, r.countryEn].join(' ').toLowerCase().includes(q)));
+}
+function renderTable(){
+  const v = view(), shown = v.slice(0, LIMIT);
+  const allOn = v.length && v.every(r => SEL.has(r.id));
+  $('rtable').innerHTML = `<thead><tr><th><input type="checkbox" class="ck" id="selAll" ${allOn ? 'checked' : ''} aria-label="সব বেছে নিন"></th><th>সময়</th><th>নাম</th><th>দেশ</th><th>মুদ্রা ও পরিমাণ</th><th>ফি %</th><th>পদ্ধতি</th></tr></thead><tbody>${shown.length ? shown.map(r => `<tr class="rw" data-id="${r.id}"><td><input type="checkbox" class="ck rc" data-id="${r.id}" ${SEL.has(r.id) ? 'checked' : ''}></td><td class="n">${esc(fmtDate(r.createdAt))}</td><td>${esc(r.name)}</td><td class="n">${flag(r.countryCode)}${esc(r.countryBn)}</td><td class="n">${esc(r.currency || '')} ${r.avgAmount != null ? esc(r.avgAmount) : ''}</td><td>${r.feePercent == null ? '—' : r.feePercent + '%'}</td><td>${r.methods.map(m => `<span class="chip">${esc(lab('methods', m))}</span>`).join('')}</td></tr>`).join('') : '<tr><td colspan="7" class="empty">কিছু পাওয়া যায়নি</td></tr>'}</tbody>`;
+  $('more').hidden = v.length <= LIMIT;
+  $('more').textContent = `আরও দেখান (${v.length - LIMIT} টি বাকি)`;
+}
+$('more').onclick = () => { LIMIT += 100; renderTable(); };
+$('q').oninput = () => { LIMIT = 100; renderTable(); };
+$('cf').onchange = () => { LIMIT = 100; renderTable(); };
+$('rtable').addEventListener('click', e => {
+  if (e.target.id === 'selAll'){ const v = view(); e.target.checked ? v.forEach(r => SEL.add(r.id)) : v.forEach(r => SEL.delete(r.id)); renderTable(); updateSel(); return; }
+  if (e.target.classList.contains('rc')){ e.target.checked ? SEL.add(e.target.dataset.id) : SEL.delete(e.target.dataset.id); updateSel(); return; }
+  const tr = e.target.closest('tr.rw'); if (tr) openModal(tr.dataset.id);
+});
+function updateSel(){
+  $('selLbl').textContent = `নির্বাচিত ডাউনলোড (${SEL.size}) ▾`;
+  $('ddSel').classList.toggle('dis', !SEL.size);
+  const a = $('selAll'); if (a){ const v = view(); a.checked = v.length > 0 && v.every(r => SEL.has(r.id)); }
+}
+
+/* ---------- modal (single response) ---------- */
+let cur = null;
+function openModal(id){
+  cur = ALL.find(r => r.id === id); if (!cur) return;
+  $('mt').textContent = cur.name || 'উত্তর';
+  $('mbody').innerHTML = DETAIL.map(([f, l]) => { const v = valStr(cur, f); return v === '' || v == null ? '' : `<dl class="dl"><dt>${l}</dt><dd>${esc(v)}</dd></dl>`; }).join('');
+  $('mfoot').innerHTML = ['xlsx:Excel', 'csv:CSV', 'json:JSON', 'pdf:PDF'].map(x => { const [f, n] = x.split(':'); return `<button class="btn" data-f="${f}">${n}</button>`; }).join('') + '<span style="flex:1"></span><button class="btn danger" id="delBtn">মুছুন</button>';
+  $('modal').hidden = false;
+}
+$('mfoot').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b || !cur) return;
+  if (b.id === 'delBtn'){ if (confirm('এই উত্তরটি স্থায়ীভাবে মুছে ফেলবেন?')){ try { await db.collection(COLLECTION).doc(cur.id).delete(); $('modal').hidden = true; toast('মুছে ফেলা হয়েছে'); } catch (err) { alert('মোছা যায়নি। Rules-এ delete অনুমতি আছে কি না দেখুন।'); } } return; }
+  exportData(b.dataset.f, [cur], 'response-' + (cur.name || 'x').replace(/\s+/g, '-') + '-' + cur.id.slice(0, 5), true);
+});
+$('mx').onclick = () => { $('modal').hidden = true; };
+$('modal').addEventListener('click', e => { if (e.target === $('modal')) $('modal').hidden = true; });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('modal').hidden = true; });
+
+/* ---------- downloads ---------- */
+document.addEventListener('click', e => { document.querySelectorAll('details.dd[open]').forEach(d => { if (!d.contains(e.target)) d.open = false; }); });
+document.querySelectorAll('.dd .menu button').forEach(b => b.onclick = () => {
+  const list = b.dataset.sc === 'all' ? ALL : ALL.filter(r => SEL.has(r.id));
+  b.closest('details').open = false;
+  if (!list.length) return toast('ডাউনলোড করার মতো ডেটা নেই');
+  exportData(b.dataset.f, list, 'probashi-survey-' + (b.dataset.sc === 'all' ? 'all' : 'selected') + '-' + new Date().toISOString().slice(0, 10));
+});
+function flat(r){
+  return {id:r.id, createdAt:r.createdAt ? r.createdAt.toISOString() : '', name:r.name, whatsapp:r.whatsapp, email:r.email, countryBn:r.countryBn, countryEn:r.countryEn, countryCode:r.countryCode, yearsAbroad:r.yearsAbroad, job:r.job, methods:r.methods.join('; '), service:r.service, timesPerMonth:r.timesPerMonth.join('; '), currency:r.currency, currencyName:r.currencyName, avgAmount:r.avgAmount, monthlyVolume:r.monthlyVolume, feePerTransfer:r.feePerTransfer, feePercent:r.feePercent, transferTime:r.transferTime.join('; '), rateFeeling:r.rateFeeling.join('; '), problems:r.problems.join('; '), incentiveAware:r.incentiveAware.join('; '), wants:r.wants.join('; '), interest:r.interest.join('; '), note:r.note};
+}
+function save(blob, name){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+function exportData(fmt, list, name, single){
+  const rows = list.map(flat);
+  if (fmt === 'csv'){
+    const cols = Object.keys(rows[0]), cell = v => { v = v == null ? '' : String(v).replace(/"/g, '""'); return /[",\n\r]/.test(v) ? `"${v}"` : v; };
+    save(new Blob(['\ufeff' + [cols.join(',')].concat(rows.map(r => cols.map(c => cell(r[c])).join(','))).join('\n')], {type:'text/csv;charset=utf-8'}), name + '.csv');
+  } else if (fmt === 'json'){
+    save(new Blob([JSON.stringify(single ? rows[0] : rows, null, 2)], {type:'application/json'}), name + '.json');
+  } else if (fmt === 'xlsx'){
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'Responses');
+    if (!single) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(countryStats(list).map(c => ({country:c.bn, countryEn:c.en, responses:c.n, avgFeePercent:c.fee == null ? '' : +c.fee.toFixed(2), topMethod:c.top, wantNewService:c.yes}))), 'ByCountry');
+    XLSX.writeFile(wb, name + '.xlsx');
+  } else if (fmt === 'pdf'){
+    printHTML(single ? singleReport(list[0]) : fullReport(list));
+  }
+}
+function printHTML(html){ $('printArea').innerHTML = html; toast('প্রিন্ট উইন্ডোতে "Save as PDF" বেছে নিন'); setTimeout(() => window.print(), 350); }
+function singleReport(r){
+  return `<h1>জরিপের উত্তর: ${esc(r.name)}</h1><p>${esc(fmtDate(r.createdAt))}</p><table>${DETAIL.map(([f, l]) => { const v = valStr(r, f); return v === '' || v == null ? '' : `<tr><th style="width:32%">${l}</th><td>${esc(v)}</td></tr>`; }).join('')}</table>`;
+}
+function fullReport(list){
+  const n = list.length, fees = list.map(r => r.feePercent).filter(x => x != null), f = avg(fees);
+  const tbl = (t, fld) => { const it = count(list, fld); return it.length ? `<h2>${t}</h2><table><tr><th>উত্তর</th><th>সংখ্যা</th><th>শতাংশ</th></tr>${it.map(([k, v]) => `<tr><td>${esc(lab(fld, k))}</td><td>${v}</td><td>${pct(v, n)}%</td></tr>`).join('')}</table>` : ''; };
+  return `<h1>প্রবাসী জরিপ রিপোর্ট</h1><p>তারিখ: ${esc(new Date().toLocaleDateString('bn-BD'))} · মোট উত্তর: ${n} · গড় ফি: ${f == null ? '—' : f.toFixed(1) + '%'}</p>`
+    + `<h2>দেশ অনুযায়ী</h2><table><tr><th>দেশ</th><th>উত্তর</th><th>গড় ফি %</th><th>বেশি ব্যবহৃত পদ্ধতি</th><th>নতুন সার্ভিস চান</th></tr>${countryStats(list).map(c => `<tr><td>${esc(c.bn)}</td><td>${c.n}</td><td>${c.fee == null ? '—' : c.fee.toFixed(1) + '%'}</td><td>${esc(c.top)}</td><td>${c.yes}</td></tr>`).join('')}</table>`
+    + tbl('টাকা পাঠানোর পদ্ধতি', 'methods') + tbl('সমস্যা', 'problems') + tbl('যা চান', 'wants') + tbl('রেট নিয়ে মত', 'rateFeeling') + tbl('পৌঁছাতে সময়', 'transferTime') + tbl('মাসে কতবার', 'timesPerMonth') + tbl('নতুন সার্ভিস দেখতে চান', 'interest')
+    + `<h2>সব উত্তর</h2><table><tr><th>নাম</th><th>দেশ</th><th>মুদ্রা</th><th>পরিমাণ</th><th>ফি %</th><th>পদ্ধতি</th></tr>${list.map(r => `<tr><td>${esc(r.name)}</td><td>${esc(r.countryBn)}</td><td>${esc(r.currency || '')}</td><td>${r.avgAmount == null ? '' : esc(r.avgAmount)}</td><td>${r.feePercent == null ? '' : r.feePercent}</td><td>${esc(r.methods.map(m => lab('methods', m)).join('، '))}</td></tr>`).join('')}</table>`;
+}
+</script>
+</body>
+</html>
